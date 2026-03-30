@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "kbrelay",
+	"version": "${version}",
+	"name": "KBRelay",
+	"description": "Relays a second keyboard's inputs into Minecraft over TCP.",
+	"authors": ["azawat"],
+	"license": "CC0-1.0",
+	"icon": "assets/kbrelay/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			{
+				"value": "com.azawat.kbrelay.KbRelayMod",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"kbrelay.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
