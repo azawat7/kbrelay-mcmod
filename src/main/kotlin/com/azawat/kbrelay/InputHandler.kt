@@ -28,6 +28,7 @@ class InputHandler {
                 }
                 "key_down" -> {
                     val glfw = glfwKey(msg.key ?: continue@loop) ?: continue@loop
+                    if (heldKeys.contains(glfw)) continue@loop
                     heldKeys.add(glfw)
                     keyboard.invokeKeyPress(window, GLFW.GLFW_PRESS, KeyEvent(glfw, 0, 0))
                 }
