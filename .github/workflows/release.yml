@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - gradle.properties
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if version changed
+        id: version_check
+        run: |
+          PREV=$(git show HEAD^:gradle.properties 2>/dev/null || echo "")
+          CURR=$(cat gradle.properties)
+
+          prev_mod=$(echo "$PREV" | grep -oP 'mod_version=\K.*' || echo "")
+          curr_mod=$(echo "$CURR" | grep -oP 'mod_version=\K.*')
+          prev_mc=$(echo "$PREV" | grep -oP 'minecraft_version=\K.*' || echo "")
+          curr_mc=$(echo "$CURR" | grep -oP 'minecraft_version=\K.*')
+
+          echo "mod_version=$curr_mod" >> $GITHUB_OUTPUT
+          echo "mc_version=$curr_mc" >> $GITHUB_OUTPUT
+
+          if [ "$prev_mod" != "$curr_mod" ] || [ "$prev_mc" != "$curr_mc" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check if tag exists
+        id: tag
+        if: steps.version_check.outputs.changed == 'true'
+        run: |
+          TAG="v${{ steps.version_check.outputs.mod_version }}-mc${{ steps.version_check.outputs.mc_version }}"
+          EXISTS=$(git ls-remote --tags origin "refs/tags/$TAG" | grep -c "$TAG" || true)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "exists=$( [ "$EXISTS" -gt 0 ] && echo true || echo false )" >> $GITHUB_OUTPUT
+
+      - name: Setup JDK
+        if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+
+      - name: Make gradle wrapper executable
+        if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
+        run: chmod +x ./gradlew
+
+      - name: Build
+        if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
+        run: ./gradlew build
+
+      - name: Rename artifact
+        if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
+        run: |
+          MOD_VERSION="${{ steps.version_check.outputs.mod_version }}"
+          MC_VERSION="${{ steps.version_check.outputs.mc_version }}"
+          cp "build/libs/kbrelay-${MOD_VERSION}.jar" \
+             "kbrelay-${MOD_VERSION}-mc${MC_VERSION}.jar"
+
+      - name: Create release
+        if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.version_check.outputs.mod_version }} MC${{ steps.version_check.outputs.mc_version }}
+          files: kbrelay-${{ steps.version_check.outputs.mod_version }}-mc${{ steps.version_check.outputs.mc_version }}.jar
