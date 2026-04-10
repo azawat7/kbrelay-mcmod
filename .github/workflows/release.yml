@@ -66,10 +66,26 @@ jobs:
           cp "build/libs/kbrelay-${MOD_VERSION}.jar" \
              "kbrelay-${MOD_VERSION}-mc${MC_VERSION}.jar"
 
+      - name: Generate release notes
+        id: notes
+        if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s" HEAD)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" "${PREV_TAG}..HEAD")
+          fi
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "## Changes" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create release
         if: steps.version_check.outputs.changed == 'true' && steps.tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: ${{ steps.version_check.outputs.mod_version }} MC${{ steps.version_check.outputs.mc_version }}
+          body: ${{ steps.notes.outputs.body }}
           files: kbrelay-${{ steps.version_check.outputs.mod_version }}-mc${{ steps.version_check.outputs.mc_version }}.jar
