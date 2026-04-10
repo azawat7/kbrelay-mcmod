@@ -1,20 +1,24 @@
-# KBRelay Mod
+# KBRelay
 
 ## Requirements
 
-- Java 21+
+- [KBRelay App](https://github.com/azawat7/kbrelay-app)
+- [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
 
-## Building
+## Commands
 
-```
+| Command                   | Description                              |
+| ------------------------- | ---------------------------------------- |
+| `/kbrelay info`           | Show the current listening port          |
+| `/kbrelay port <1-65535>` | Change the port and restart the listener |
+| `/kbrelay reset`          | Reset port to default (25560)            |
+
+## Building from source
+
+Requires Java 21+.
+
+```bash
 ./gradlew build
 ```
 
-Output: `build/libs/kbrelay-1.0.0.jar`
-
-## Install
-
-Copy the built `.jar` to your Minecraft `mods/` folder alongside:
-
-- [Fabric API](https://modrinth.com/mod/fabric-api)
-- [Fabric Language Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
+Output: `build/libs/kbrelay-<version>.jar`
