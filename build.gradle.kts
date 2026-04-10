@@ -4,6 +4,7 @@ plugins {
 	id("net.fabricmc.fabric-loom-remap")
 	`maven-publish`
 	id("org.jetbrains.kotlin.jvm") version "2.3.20"
+	id("com.diffplug.spotless") version "8.4.0"
 }
 
 version = providers.gradleProperty("mod_version").get()
@@ -58,6 +59,18 @@ java {
 
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
+}
+
+spotless {
+	kotlin {
+		ktfmt().googleStyle().configure {
+			it.setBlockIndent(4)
+			it.setContinuationIndent(4)
+		}
+	}
+	java {
+		googleJavaFormat().aosp()
+	}
 }
 
 tasks.jar {

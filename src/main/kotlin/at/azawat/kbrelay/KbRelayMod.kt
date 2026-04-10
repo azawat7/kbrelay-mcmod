@@ -17,9 +17,7 @@ object KbRelayMod : ClientModInitializer {
         inputServer = InputServer(inputHandler)
         inputServer.start()
         Commands.register()
-        ClientTickEvents.END_CLIENT_TICK.register { client ->
-            inputHandler.processTick(client)
-        }
+        ClientTickEvents.END_CLIENT_TICK.register { client -> inputHandler.processTick(client) }
         logger.info("KBRelay ready on :${Config.port}")
     }
 }

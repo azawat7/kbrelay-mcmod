@@ -2,17 +2,22 @@ package at.azawat.kbrelay.input
 
 import at.azawat.kbrelay.mixin.KeyboardHandlerAccessor
 import at.azawat.kbrelay.network.KeyMessage
+import java.util.concurrent.ConcurrentLinkedQueue
 import net.minecraft.client.Minecraft
 import net.minecraft.client.input.KeyEvent
 import org.lwjgl.glfw.GLFW
-import java.util.concurrent.ConcurrentLinkedQueue
 
 class InputHandler {
     private val queue = ConcurrentLinkedQueue<KeyMessage>()
     private val heldKeys = mutableSetOf<Int>()
 
-    fun enqueue(msg: KeyMessage) { queue.add(msg) }
-    fun releaseAll() { queue.add(KeyMessage("release_all")) }
+    fun enqueue(msg: KeyMessage) {
+        queue.add(msg)
+    }
+
+    fun releaseAll() {
+        queue.add(KeyMessage("release_all"))
+    }
 
     fun processTick(client: Minecraft) {
         val window = client.window.handle()
@@ -41,5 +46,4 @@ class InputHandler {
             }
         }
     }
-
 }

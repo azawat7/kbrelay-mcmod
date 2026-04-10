@@ -1,8 +1,8 @@
 package at.azawat.kbrelay
 
 import com.google.gson.Gson
-import net.fabricmc.loader.api.FabricLoader
 import java.io.File
+import net.fabricmc.loader.api.FabricLoader
 
 object Config {
     private val gson = Gson()
