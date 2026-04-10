@@ -13,11 +13,15 @@
 | `/kbrelay port <1-65535>` | Change the port and restart the listener |
 | `/kbrelay reset`          | Reset port to default (25560)            |
 
-## Building from source
+## Developing
 
 Requires Java 21+.
 
 ```bash
+# Format
+./gradlew spotlessApply
+
+# Build
 ./gradlew build
 ```
 
