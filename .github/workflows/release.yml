@@ -20,21 +20,24 @@ jobs:
       - name: Check if version changed
         id: version_check
         run: |
-          PREV=$(git show HEAD^:gradle.properties 2>/dev/null || echo "")
           CURR=$(cat gradle.properties)
-
-          prev_mod=$(echo "$PREV" | grep -oP 'mod_version=\K.*' || echo "")
           curr_mod=$(echo "$CURR" | grep -oP 'mod_version=\K.*')
-          prev_mc=$(echo "$PREV" | grep -oP 'minecraft_version=\K.*' || echo "")
           curr_mc=$(echo "$CURR" | grep -oP 'minecraft_version=\K.*')
 
           echo "mod_version=$curr_mod" >> $GITHUB_OUTPUT
           echo "mc_version=$curr_mc" >> $GITHUB_OUTPUT
 
-          if [ "$prev_mod" != "$curr_mod" ] || [ "$prev_mc" != "$curr_mc" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
-            echo "changed=false" >> $GITHUB_OUTPUT
+            PREV=$(git show HEAD^:gradle.properties 2>/dev/null || echo "")
+            prev_mod=$(echo "$PREV" | grep -oP 'mod_version=\K.*' || echo "")
+            prev_mc=$(echo "$PREV" | grep -oP 'minecraft_version=\K.*' || echo "")
+            if [ "$prev_mod" != "$curr_mod" ] || [ "$prev_mc" != "$curr_mc" ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Check if tag exists
