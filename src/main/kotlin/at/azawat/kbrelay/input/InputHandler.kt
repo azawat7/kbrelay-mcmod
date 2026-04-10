@@ -1,6 +1,7 @@
-package at.azawat.kbrelay
+package at.azawat.kbrelay.input
 
 import at.azawat.kbrelay.mixin.KeyboardHandlerAccessor
+import at.azawat.kbrelay.network.KeyMessage
 import net.minecraft.client.Minecraft
 import net.minecraft.client.input.KeyEvent
 import org.lwjgl.glfw.GLFW

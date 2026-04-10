@@ -1,19 +1,37 @@
-package at.azawat.kbrelay
+package at.azawat.kbrelay.network
 
+import at.azawat.kbrelay.Config
+import at.azawat.kbrelay.KbRelayMod
+import at.azawat.kbrelay.input.InputHandler
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.SocketException
 
 class InputServer(private val handler: InputHandler) {
+    @Volatile private var serverSocket: ServerSocket? = null
 
-    fun start() {
+    fun start() = startOn(Config.port)
+
+    fun restart(port: Int) {
+        serverSocket?.close()
+        startOn(port)
+    }
+
+    private fun startOn(port: Int) {
         val thread = Thread({
             try {
-                val server = ServerSocket(25560)
-                KbRelayMod.logger.info("KBRelay listening on :25560")
-                while (true) {
-                    val client = server.accept()
-                    KbRelayMod.logger.info("KBRelay: C# app connected from ${client.remoteSocketAddress}")
-                    handleClient(client)
+                val server = ServerSocket(port)
+                serverSocket = server
+                KbRelayMod.logger.info("KBRelay listening on :$port")
+                while (!server.isClosed) {
+                    try {
+                        val client = server.accept()
+                        KbRelayMod.logger.info("KBRelay: C# app connected from ${client.remoteSocketAddress}")
+                        handleClient(client)
+                    } catch (e: SocketException) {
+                        if (server.isClosed) break
+                        KbRelayMod.logger.error("KBRelay accept error: ${e.message}", e)
+                    }
                 }
             } catch (e: Exception) {
                 KbRelayMod.logger.error("KBRelay server failed: ${e.message}", e)
