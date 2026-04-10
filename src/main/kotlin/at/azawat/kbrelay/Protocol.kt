@@ -1,4 +1,4 @@
-package com.azawat.kbrelay
+package at.azawat.kbrelay
 
 import com.google.gson.Gson
 

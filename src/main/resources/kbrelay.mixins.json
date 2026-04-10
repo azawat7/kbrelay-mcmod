@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "com.azawat.kbrelay.mixin",
+	"package": "at.azawat.kbrelay.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": ["KeyboardHandlerAccessor"]
 }

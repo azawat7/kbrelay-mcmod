@@ -1,4 +1,4 @@
-package com.azawat.kbrelay
+package at.azawat.kbrelay
 
 import org.lwjgl.glfw.GLFW
 

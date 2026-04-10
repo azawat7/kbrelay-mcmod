@@ -1,4 +1,4 @@
-package com.azawat.kbrelay.mixin;
+package at.azawat.kbrelay.mixin;
 
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.input.KeyEvent;

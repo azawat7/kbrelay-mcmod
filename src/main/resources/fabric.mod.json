@@ -11,7 +11,7 @@
 	"entrypoints": {
 		"client": [
 			{
-				"value": "com.azawat.kbrelay.KbRelayMod",
+				"value": "at.azawat.kbrelay.KbRelayMod",
 				"adapter": "kotlin"
 			}
 		]

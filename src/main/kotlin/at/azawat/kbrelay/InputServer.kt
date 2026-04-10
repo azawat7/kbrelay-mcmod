@@ -1,4 +1,4 @@
-package com.azawat.kbrelay
+package at.azawat.kbrelay
 
 import java.net.ServerSocket
 import java.net.Socket
